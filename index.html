@@ -3,97 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Protocolos</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Sistema de Protocolamento</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 600px; margin: auto; }
-        input, textarea, button { width: 100%; margin: 5px 0; padding: 8px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .etiqueta {
+            display: none;
+            width: 200px;
+            border: 1px solid black;
+            padding: 10px;
+            margin: 20px auto;
+            text-align: center;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Sistema de Protocolos</h2>
-        <input type="text" id="protocol_number" placeholder="Número do Protocolo">
-        <input type="text" id="author" placeholder="Autor">
-        <input type="text" id="recipient" placeholder="Destinatário">
-        <textarea id="description" placeholder="Descrição"></textarea>
-        <button onclick="addProtocol()">Cadastrar</button>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Número</th>
-                    <th>Autor</th>
-                    <th>Destinatário</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="protocolTable"></tbody>
-        </table>
+    <h1>Sistema de Protocolamento</h1>
+    <button onclick="gerarEtiqueta()">Gerar Etiqueta</button>
+    <div id="etiqueta" class="etiqueta">
+        <strong>CÂMARA MUNICIPAL DE APIAÍ</strong>
+        <p id="dataHora"></p>
     </div>
-    
+
     <script>
-        let protocols = [];
-
-        function addProtocol() {
-            const number = document.getElementById("protocol_number").value;
-            const author = document.getElementById("author").value;
-            const recipient = document.getElementById("recipient").value;
-            const description = document.getElementById("description").value;
-
-            if (!number || !author || !recipient || !description) {
-                alert("Preencha todos os campos!");
-                return;
-            }
-            
-            const protocol = { number, author, recipient, description, date: new Date() };
-            protocols.push(protocol);
-            updateTable();
-        }
-
-        function updateTable() {
-            const table = document.getElementById("protocolTable");
-            table.innerHTML = "";
-            protocols.forEach((p, index) => {
-                table.innerHTML += `<tr>
-                    <td>${p.number}</td>
-                    <td>${p.author}</td>
-                    <td>${p.recipient}</td>
-                    <td>
-                        <button onclick="printProtocol(${index})">🖨️ Imprimir</button>
-                        <button onclick="downloadPDF(${index})">📄 PDF</button>
-                    </td>
-                </tr>`;
-            });
-        }
-
-        function printProtocol(index) {
-            const p = protocols[index];
-            const printWindow = window.open("", "_blank");
-            printWindow.document.write(`
-                <html>
-                    <body>
-                        <h2>Protocolo Nº ${p.number}</h2>
-                        <p>Data: ${new Date(p.date).toLocaleString()}</p>
-                        <p>Autor: ${p.author}</p>
-                        <p>Destinatário: ${p.recipient}</p>
-                        <p>Descrição: ${p.description}</p>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-        function downloadPDF(index) {
-            const { jsPDF } = window.jspdf;
-            const p = protocols[index];
-            const doc = new jsPDF();
-            doc.text(`Protocolo Nº ${p.number}\nAutor: ${p.author}\nDestinatário: ${p.recipient}\nDescrição:\n${p.description}`, 10, 10);
-            doc.save(`Protocolo-${p.number}.pdf`);
+        function gerarEtiqueta() {
+            var etiqueta = document.getElementById("etiqueta");
+            var dataHora = new Date().toLocaleString("pt-BR");
+            document.getElementById("dataHora").innerText = "Data/Hora: " + dataHora;
+            etiqueta.style.display = "block";
         }
     </script>
 </body>
