@@ -36,7 +36,6 @@
             </thead>
             <tbody id="listaProtocolos"></tbody>
         </table>
-        <button onclick="gerarEtiqueta()">Gerar Etiqueta</button>
     </div>
     <script>
         let protocolos = [];
@@ -62,6 +61,7 @@
                     <td>${p.destinatario}</td>
                     <td>
                         <button onclick="excluirProtocolo(${index})">Excluir</button>
+                        <button onclick="gerarEtiqueta(${index})">Gerar Etiqueta</button>
                     </td>
                 </tr>`;
             });
@@ -70,10 +70,14 @@
             protocolos.splice(index, 1);
             atualizarLista();
         }
-        function gerarEtiqueta() {
+        function gerarEtiqueta(index) {
+            let protocolo = protocolos[index];
             let dataHora = new Date().toLocaleString();
             let janela = window.open("", "Etiqueta", "width=400,height=200");
             janela.document.write(`<h3>CÂMARA MUNICIPAL DE APIAÍ</h3>`);
+            janela.document.write(`<p>Número: ${protocolo.numero}</p>`);
+            janela.document.write(`<p>Descrição: ${protocolo.descricao}</p>`);
+            janela.document.write(`<p>Destinatário: ${protocolo.destinatario}</p>`);
             janela.document.write(`<p>Data e Hora: ${dataHora}</p>`);
             janela.print();
         }
