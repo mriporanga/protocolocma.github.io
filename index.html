@@ -5,41 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Protocolamento</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        .etiqueta {
-            display: none;
-            width: 200px;
-            border: 1px solid black;
-            padding: 10px;
-            margin: 20px auto;
-            text-align: center;
-            font-size: 14px;
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px;
-            font-size: 16px;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        input, button { width: 100%; margin: 5px 0; padding: 10px; }
+        table { width: 100%; margin-top: 10px; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
     </style>
 </head>
 <body>
-    <h1>Sistema de Protocolamento</h1>
-    <button onclick="gerarEtiqueta()">Gerar Etiqueta</button>
-    <div id="etiqueta" class="etiqueta">
-        <strong>CÂMARA MUNICIPAL DE APIAÍ</strong>
-        <p id="dataHora"></p>
+    <div class="container">
+        <h2>Sistema de Protocolamento</h2>
+        <label>Número do Protocolo:</label>
+        <input type="text" id="numero">
+        <label>Descrição:</label>
+        <input type="text" id="descricao">
+        <label>Destinatário:</label>
+        <input type="text" id="destinatario">
+        <label>Anexar Arquivo:</label>
+        <input type="file" id="arquivo">
+        <button onclick="adicionarProtocolo()">Adicionar Protocolo</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Descrição</th>
+                    <th>Destinatário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="listaProtocolos"></tbody>
+        </table>
+        <button onclick="gerarEtiqueta()">Gerar Etiqueta</button>
     </div>
-
     <script>
+        let protocolos = [];
+        function adicionarProtocolo() {
+            let numero = document.getElementById("numero").value;
+            let descricao = document.getElementById("descricao").value;
+            let destinatario = document.getElementById("destinatario").value;
+            let arquivo = document.getElementById("arquivo").files[0]?.name || "Nenhum";
+            if (numero && descricao && destinatario) {
+                protocolos.push({ numero, descricao, destinatario, arquivo });
+                atualizarLista();
+            } else {
+                alert("Preencha todos os campos!");
+            }
+        }
+        function atualizarLista() {
+            let tbody = document.getElementById("listaProtocolos");
+            tbody.innerHTML = "";
+            protocolos.forEach((p, index) => {
+                tbody.innerHTML += `<tr>
+                    <td>${p.numero}</td>
+                    <td>${p.descricao}</td>
+                    <td>${p.destinatario}</td>
+                    <td>
+                        <button onclick="excluirProtocolo(${index})">Excluir</button>
+                    </td>
+                </tr>`;
+            });
+        }
+        function excluirProtocolo(index) {
+            protocolos.splice(index, 1);
+            atualizarLista();
+        }
         function gerarEtiqueta() {
-            var etiqueta = document.getElementById("etiqueta");
-            var dataHora = new Date().toLocaleString("pt-BR");
-            document.getElementById("dataHora").innerText = "Data/Hora: " + dataHora;
-            etiqueta.style.display = "block";
+            let dataHora = new Date().toLocaleString();
+            let janela = window.open("", "Etiqueta", "width=400,height=200");
+            janela.document.write(`<h3>CÂMARA MUNICIPAL DE APIAÍ</h3>`);
+            janela.document.write(`<p>Data e Hora: ${dataHora}</p>`);
+            janela.print();
         }
     </script>
 </body>
